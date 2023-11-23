@@ -1,0 +1,30 @@
+.splash-ctn {
+    height: 100vh;
+    width: 100vw;
+    background: rgb(51,51,51);
+    background: linear-gradient(150deg, rgba(51,51,51,1) 15%, rgba(248,248,248,0.7932422969187676) 61%, rgba(255,255,255,1) 100%);
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.splash-ctn button {
+    height: 50px;
+    width: 150px;
+    margin-top: 20px;
+    border-radius: 20px;
+    background-color: rgba(208,2,27,1);
+    color: white;
+    border: 1px solid rgba(248,248,248,1);
+    transition: background-color 0.3s,
+    color 0.3s,
+    border 0.3s
+}
+
+.splash-ctn button:hover {
+    background-color: rgba(248,248,248,1);
+    border: 2px solid black;
+    color: black
+}

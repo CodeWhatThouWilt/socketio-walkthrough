@@ -15,12 +15,15 @@ const SplashPage = () => {
     const openSignUpModal = () => setShowSignUpModal(true);
 
     return (
-        <section>
-            <h1>Welcome!</h1>
-            <h2>April 2023 Cohort Chat App</h2>
-            <h3>This is just a little chat app for showcasing socket.io</h3>
-            <button onClick={openLoginModal}>Log In</button>
-            <button onClick={openSignUpModal}>Sign Up</button>
+        <>
+            <div className="splash-ctn">
+                <h1>Welcome!</h1>
+                <h2>April 2023 Cohort Chat App</h2>
+                <h3>This is just a little chat app for showcasing socket.io</h3>
+                <button onClick={openLoginModal}>Log In</button>
+                <button onClick={openSignUpModal}>Sign Up</button>
+            </div>
+
             {showLoginModal && (
                 <Modal onClose={() => setShowLoginModal(false)}>
                     <LoginModal />
@@ -31,7 +34,7 @@ const SplashPage = () => {
                     <SignUpModal />
                 </Modal>
             )}
-        </section>
+        </>
     );
 };
 

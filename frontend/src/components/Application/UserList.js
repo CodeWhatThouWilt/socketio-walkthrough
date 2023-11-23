@@ -13,6 +13,7 @@ const UserList = () => {
 
     return (
         <div className="user-list-ctn">
+            <h2>Users</h2>
             <ul>
                 {Object.values(users).map((user) => (
                     <li key={user.id}>{user.username}</li>

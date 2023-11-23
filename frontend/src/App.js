@@ -31,7 +31,7 @@ function App() {
                     <Route
                         exact
                         path="/"
-                        component={user ? Application : SplashPage}
+                        component={user?.id ? Application : SplashPage}
                     />
                 </Switch>
             )}

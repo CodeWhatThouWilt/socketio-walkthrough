@@ -24,7 +24,7 @@
     align-items: center;
 }
 
-.auth-modal-ctn input {
+.auth-modal-ctn input, .password-ctn input {
     height: 52px;
     width: calc(100% - 48px);
     border-radius: 8px;

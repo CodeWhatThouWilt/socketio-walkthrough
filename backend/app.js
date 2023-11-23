@@ -6,13 +6,21 @@ const csurf = require("csurf");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { ValidationError } = require("sequelize");
-
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const { authenticateSocket } = require("./utils/socket-auth.js");
+const {
+    handleChat,
+    handleUserOnline,
+} = require("./controllers/socket-io-handlers.js");
 const { environment } = require("./config");
 const isProduction = environment === "production";
 
 const routes = require("./routes");
+const { SocketAddress } = require("net");
 
 const app = express();
+const server = createServer(app);
 
 app.use(morgan("dev"));
 app.use(cookieParser());
@@ -39,6 +47,23 @@ app.use(
 );
 
 app.use(routes);
+
+const corsPolicy = isProduction && {
+    cors: {
+        origin: "whatever your frontend host url is",
+    },
+};
+
+const io = new Server(server, {
+    ...corsPolicy,
+});
+
+io.use((socket, next) => authenticateSocket(socket, next));
+
+io.on("connection", (socket) => {
+    handleChat(io, socket);
+    handleUserOnline(io, socket);
+});
 
 app.use((_req, _res, next) => {
     const err = new Error("The requested resource couldn't be found.");
@@ -72,4 +97,7 @@ app.use((err, _req, res, _next) => {
     });
 });
 
-module.exports = app;
+module.exports = {
+    app,
+    server,
+};

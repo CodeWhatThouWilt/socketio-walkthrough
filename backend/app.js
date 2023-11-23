@@ -6,13 +6,16 @@ const csurf = require("csurf");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { ValidationError } = require("sequelize");
-
 const { environment } = require("./config");
 const isProduction = environment === "production";
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const { authenticateSocket } = require("./utils/socket-auth.js");
+const { Message } = require("./db/models");
 
 const routes = require("./routes");
-
 const app = express();
+const server = createServer(app);
 
 app.use(morgan("dev"));
 app.use(cookieParser());
@@ -38,7 +41,38 @@ app.use(
     })
 );
 
+const socketCors = isProduction && {
+    cors: {
+        origin: "whatever production frontend url is",
+    },
+};
+
 app.use(routes);
+
+const io = new Server(server, {
+    ...socketCors,
+});
+
+io.use((socket, next) => authenticateSocket(socket, next));
+
+io.on("connection", (socket) => {
+    socket.on("chat", async (message) => {
+        const { content } = message;
+
+        const newMessage = await Message.create({
+            content,
+            userId: socket.user.id,
+        });
+
+        newMessage.dataValues.User = socket.user;
+
+        io.emit("chat", newMessage);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User diconnected");
+    });
+});
 
 app.use((_req, _res, next) => {
     const err = new Error("The requested resource couldn't be found.");
@@ -72,4 +106,7 @@ app.use((err, _req, res, _next) => {
     });
 });
 
-module.exports = app;
+module.exports = {
+    app,
+    server,
+};
